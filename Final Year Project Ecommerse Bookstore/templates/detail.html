@@ -1,0 +1,151 @@
+<style>
+  .review-section {
+      margin-top: 30px;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: #f9f9f9;
+      max-width: 600px;
+  }
+  .review-item {
+      margin-bottom: 15px;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 10px;
+  }
+  .review-item strong {
+      color: #333;
+  }
+  .review-textarea {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      resize: vertical;
+  }
+  .review-submit {
+      margin-top: 10px;
+      padding: 8px 16px;
+      background-color: #007bff;
+      border: none;
+      color: white;
+      font-size: 14px;
+      border-radius: 4px;
+      cursor: pointer;
+  }
+  .review-submit:hover {
+      background-color: #0056b3;
+  }
+  </style>
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<br>
+
+<div class="card mb-3" style="max-width: 840px;">
+    <div class="row no-gutters">
+      <div class="col-md-4">
+        <img src="{{ object.image_url }}" class="card-img">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h4 class="card-title">{{ object.title }}</h4>
+          <p class="card-text">Author: {{ object.author }}</p><hr>
+          <p class="card-text">{{ object.description }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+ 
+ 
+
+<p>Price: ₹ {{ object.price|floatformat:2 }}</p>
+<a href="{% url 'add_to_cart' object.id %}" class="btn btn-outline-primary">Add to Cart</a>
+
+
+{% if object.book_available is True %}
+<a href="{% url 'checkout' object.pk %}" class="btn btn-outline-success" role="button">Buy Now</a>
+
+
+{% else %}
+<h4 class="text-danger">Out of Stock !</h4>
+{% endif %}
+
+{% comment %} <div class="review-section">
+  <h3>Reviews</h3>
+  {% for review in reviews %}
+      <div class="review-item">
+          <strong>{{ review.user.username }}</strong> ({{ review.created_at|date:"M d, Y" }}):<br>
+          {{ review.comment }}
+      </div>
+      <form method="post">
+        {% csrf_token %}
+        <label for="id_comment"><strong>Comment:</strong></label><br>
+       {{ form.comment.label_tag }}
+        {{ form.comment }}
+        <br>
+        <button type="submit" class="review-submit">Submit Review</button>
+    </form>
+  {% empty %}
+      <p>No reviews yet.</p>
+  {% endfor %}
+
+  <h4>Leave a Review</h4>
+  {% if user.is_authenticated %}
+      <form method="post" action="{% url 'book_detail' book.pk %}">
+          {% csrf_token %}
+          {% comment %} {{ form.as_p }} 
+          <input type="text" name="Comment" value="">
+          <button type="submit" class="review-submit">Submit Review</button>
+      </form>
+  {% else %}
+      <p><a href="{% url 'login' %}">Login</a> to leave a review.</p>
+  {% endif %}
+</div> {% endcomment %}
+
+{% comment %} {% if review.user == user %}
+    <form method="post" action="{% url 'delete_review' review.id %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" style="background:none;border:none;color:red;">Delete</button>
+    </form>
+{% endif %} {% endcomment %}
+
+
+{% if user.is_authenticated %}
+    <h3>Leave a Comment</h3>
+    <form method="POST" action="{% url 'book_detail' book.id %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" name="comment_submit">Post Comment</button>
+    </form>
+{% else %}
+    <p><a href="{% url 'login' %}">Login</a> to leave a comment.</p>
+{% endif %}
+
+<hr>
+
+<h3>Comments</h3>
+<ul>
+    {% for comment in comments %}
+        <li>
+            <strong>{{ comment.user.username }}</strong> ({{ comment.created_at|date:"d M Y H:i" }}):<br>
+            {{ comment.text|linebreaks }}
+            {% if comment.user == user %}
+                <form method="POST" action="{% url 'book_detail' book.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                    <button type="submit" name="delete_comment">Delete</button>
+                </form>
+            {% endif %}
+        </li>
+    {% empty %}
+        <li>No comments yet.</li>
+    {% endfor %}
+</ul>
+
+
+
+{% endblock content %}
+

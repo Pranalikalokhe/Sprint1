@@ -1,0 +1,126 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+
+<head>
+
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    
+
+    {% comment %}<script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>{% endcomment %}
+    <script src="https://kit.fontawesome.com/abc123xyz.js" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+  <title>Online Bookstore</title>
+</head>
+
+{% comment %} <body> {% endcomment %}
+  <!--Nav Bar-->
+ 
+
+  
+<body style="background-color:#f4f4f4 !important;">
+  
+
+
+
+  <nav class="navbar navbar-dark bg-dark d-flex justify-content-between align-items-center px-3">
+
+    <!-- Search Bar - Left -->
+    <form class="d-flex align-items-center" action="{% url 'search_results' %}" method="get">
+      <input name="q" type="text" class="form-control mr-2" placeholder="Click to search" autocomplete="off" style="width: 200px;">
+      <button type="submit" class="btn btn-outline-light"><i class="fas fa-search"></i></button>
+    </form>
+  
+    <!-- Brand - Center -->
+    <div class="text-center">
+      <a class="navbar-brand" style="font-size: 2.5rem ; color: white;"href="{% url 'list' %}"  >Ecommerce Bookstore</a> 
+      <!--<h1 class="text-center" style="font-size: 2.5rem ; color: white;">Bookstore</h1>-->
+
+    </div>
+  
+    <!-- Admin Button - Right -->
+    <div class="dropdown">
+      <button class="btn bg-warning text-white dropdown-toggle" style="background-color: #fff !important; color: #000 !important;" type="button" id="adminDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fa-solid fa-user"></i>
+        {% if user.is_authenticated %}
+          {{ user }}
+        {% endif %}
+      </button>
+      <div class="dropdown-menu dropdown-menu-right mt-2" aria-labelledby="adminDropdown">
+        {% if user.is_authenticated %}
+          <a class="dropdown-item text-secondary" href="{% url 'logout' %}">Logout</a>
+        {% else %}
+          <a class="dropdown-item text-secondary" href="{% url 'login' %}">Log In</a>
+          <a class="dropdown-item text-secondary" href="{% url 'signup' %}">Sign Up</a>
+        {% endif %}
+      </div>
+    </div>
+  
+  </nav><br>
+  
+
+
+  <div class='container'>
+
+
+    {% block content %}
+
+
+    {% endblock content %}
+
+
+  </div>
+
+  {% comment %} footer 
+  
+  
+      
+      {% endcomment %}
+      <div class="footer" style="color: white; background-color: #333; text-align: center; padding: 30px; margin-top: 15%;
+    position: static;">
+        <p>Online Bookstore</p>
+        <p>© 2025 Pranali Kalokhe and Suchita Shinde. All rights reserved.</p>
+        <p>
+          <a href="https://www.linkedin.com/in/pranali-kalokhe/" target="_blank" style="margin: 0 10px; color: white;">
+            <i class="fab fa-linkedin-in"></i>
+          </a>
+          <a href="#" style="margin: 0 10px; color: white;">
+            <i class="fab fa-facebook-f"></i>
+          </a>
+          <a href="#" style="margin: 0 10px; color: white;">
+            <i class="fab fa-twitter"></i>
+          </a>
+          <a href="#" style="margin: 0 10px; color: white;">
+            <i class="fab fa-youtube"></i>
+          </a>
+        </p>
+      </div>
+      
+        
+  </div>
+   
+  </nav><br>
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+    integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+    crossorigin="anonymous"></script>
+   
+</body>
+
+</html>

@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+    {% if object.book_available %}
+    <div class="row">
+       
+    <div class="col-12">
+        
+        
+        <form method="post" action="{% url 'process_upi_payment' %}">    
+            {% csrf_token %}
+            
+            <div class="container mt-5">
+                <div class="card shadow-lg p-5" style="border-radius: 20px; background: linear-gradient(to right, #17a2b8, #ffffff);">
+                    <h2 class="text-center text-success mb-4">Secure Payment</h2>
+                    <p class="text-center">Choose your payment method below to complete your purchase.</p>
+            
+                    <div class="mt-4">
+                        <h5>Pay with Indian Debit Card</h5>
+                        <form method="post" action="{% url 'process_upi_payment' %}">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="card_number">Card Number</label>
+                                <input type="text" class="form-control" id="card_number" name="card_number" placeholder="Enter card number">
+                            </div>
+                            <div class="form-group">
+                                <label for="expiry">Expiry Date</label>
+                                <input type="text" class="form-control" id="expiry" name="expiry" placeholder="MM/YY">
+                            </div>
+                            <div class="form-group">
+                                <label for="cvv">CVV</label>
+                                <input type="password" class="form-control" id="cvv" name="cvv" placeholder="CVV">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Pay Now</button>
+                        </form>
+                    </div>
+            
+                    <div class="mt-4">
+                        <h5>Pay with UPI</h5>
+                        <form method="post" action="{% url 'process_upi_payment' %}">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="upi_id">Enter UPI ID</label>
+                                <input type="text" class="form-control" id="upi_id" name="upi_id" placeholder="example@upi">
+                            </div>
+                            <div class="form-group">
+                                <label>Select UPI App</label><br>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="upi_app" id="paytm" value="Paytm">
+                                    <label class="form-check-label" for="paytm">Paytm</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="upi_app" id="phonepe" value="PhonePe">
+                                    <label class="form-check-label" for="phonepe">PhonePe</label>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success">Pay with UPI</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+    
+    
+
+    {% else %}
+    <div class="mx-auto" style="width: 340px;">
+        <h4 class="text-danger">Sorry, this book is out of Stock!</h4>
+    </div>
+    {% endif %}
+</div>
+
+<!-- PayPal JS SDK -->
+<script src="https://www.paypal.com/sdk/js?client-id=AaDbFCTAdi8NU4o-x6oOaBiLLoybkvO8w3xVZ2LgPAiTRwT4dDJu5u_ZecP9OtLTDvr7GZtZk_HuM3kq&currency=USD"></script>
+
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    const csrftoken = getCookie('csrftoken');
+    const total = '{{ object.price }}';
+    const productId = '{{ object.id }}';
+
+    function completeOrder() {
+        fetch("{% url 'complete' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify({ productId: productId })
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert("Payment processed. Thank you!");
+            window.location.href = "{% url 'complete' %}";
+        });
+    }
+
+    paypal.Buttons({
+        createOrder: function(data, actions) {
+            return actions.order.create({
+                purchase_units: [{
+                    amount: { value: total }
+                }]
+            });
+        },
+        onApprove: function(data, actions) {
+            return actions.order.capture().then(function(details) {
+                completeOrder();
+                alert('Transaction completed by ' + details.payer.name.given_name + '!');
+            });
+        }
+    }).render('#paypal-button-container');
+</script>
+
+{% endblock content %}
